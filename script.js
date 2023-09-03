@@ -1,6 +1,12 @@
 let draw = false;
 const plotSample = 7;
 const dataSource = 'https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv'
+const nameMap = {
+   'et_count': '移植数',
+   'preg_count': '妊娠数',
+   'birth_count': '分娩数',
+   'birth_ratio': '分娩率'
+};
 
 $(document).ready(function () {
   d3.text(dataSource)
@@ -18,7 +24,7 @@ let filters = [];
 function updateSwitcher() {
    let categories = getDataCategories();
    categories = categories.filter((data) => {
-      return data != 'birth_count';
+      return data != nameMap['birth_count'];
       });
 
    const switcher = d3.select("#switcher")
@@ -178,15 +184,15 @@ function getBirthRate() {
 function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
    let series = [
       {
-         name: "et_count",
+         name: nameMap["et_count"],
          data: etCount
       },
       {
-         name: "preg_count",
+         name: nameMap["preg_count"],
          data: pregCount
       },
       {
-         name: "birth_ratio",
+         name: nameMap["birth_ratio"],
          data: birthRate
       }
    ];
@@ -235,7 +241,8 @@ function tabulate(data) {
     .data(data.shift())
     .enter()
     .append("th")
-    .text((d) => d);
+    .attr('nowrap', 'nowrap')
+    .text((d) => nameMap[d]);
 
   const rows = tbody.selectAll(null).data(data).enter().append("tr");
 
