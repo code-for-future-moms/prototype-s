@@ -1,4 +1,3 @@
-let draw = false;
 const plotSample = 7;
 const dataSource = 'https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv'
 const nameMap = {
