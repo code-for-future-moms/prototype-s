@@ -1,10 +1,9 @@
 let draw = false;
 const plotSample = 7;
+const dataSource = 'https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv'
 
 $(document).ready(function () {
-  d3.text(
-    "https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv"
-  )
+  d3.text(dataSource)
     .then(d3.tsvParseRows)
     .then(tabulate)
     .then(readyUpdate)
