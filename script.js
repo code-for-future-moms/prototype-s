@@ -14,7 +14,7 @@ $(document).ready(function () {
       .then(readyUpdate)
       .then(updateSwitcher)
       .then(updateSorter)
-      .then(visibleInitialGraphs)
+      .then(selectInitialGraphData)
       .then(reloadCharts);
 });
 
@@ -72,12 +72,11 @@ function updateSorter() {
       });
 }
 
-function visibleInitialGraphs() {
+function selectInitialGraphData() {
    let categories = getDataCategories();
    let index = categories.indexOf('birth_ratio') + 1;
    var api = $("#data").dataTable().api();
    api.column(index).order('desc').draw(); api.rows({page:'current'}).select().draw();
-   reloadCharts();
 }
 
 function readyUpdate() {
