@@ -25,7 +25,7 @@ function updateSwitcher() {
       .selectAll("div")
       .data(categories)
       .enter()
-      .append("span");
+      .append("label");
 
    filters=[...categories];
    switcher.append("input")
@@ -44,7 +44,7 @@ function updateSwitcher() {
          reloadCharts();
       });
 
-   switcher.append("label")
+   switcher.append("span")
       .text((d) => d);
 
 }
