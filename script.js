@@ -200,7 +200,6 @@ function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
    series = series.filter((data) => {
       return filters.includes(data.name);
    });
-   console.log(filters);
 
    const chart = Highcharts.chart("container", {
       chart: {
