@@ -9,14 +9,14 @@ const nameMap = {
 };
 
 $(document).ready(function () {
-  d3.text(dataSource)
-    .then(d3.tsvParseRows)
-    .then(tabulate)
-    .then(readyUpdate)
-    .then(updateSwitcher)
-    .then(updateSorter)
-    .then(visibleInitialGraphs)
-    .then(reloadCharts);
+   d3.text(dataSource)
+      .then(d3.tsvParseRows)
+      .then(tabulate)
+      .then(readyUpdate)
+      .then(updateSwitcher)
+      .then(updateSorter)
+      .then(visibleInitialGraphs)
+      .then(reloadCharts);
 });
 
 let filters = [];
@@ -25,7 +25,7 @@ function updateSwitcher() {
    let categories = getDataCategories();
    categories = categories.filter((data) => {
       return data != nameMap['birth_count'];
-      });
+   });
 
    const switcher = d3.select("#switcher")
       .selectAll("div")
@@ -58,19 +58,19 @@ function updateSwitcher() {
 function updateSorter() {
    let categories = getDataCategories();
    d3.select("#sorter")
-   .selectAll("input")
-   .data(categories)
-   .enter()
-   .append("input")
-   .attr("type", "button")
-   .attr("value", (d) => d)
-   .on("click", (d) => {
-      let sorter = d.target.value;
-      let index = categories.indexOf(sorter) + 1;
-      var api = $("#data").dataTable().api();
-      api.column(index).order('desc').draw();
-      reloadCharts();
-   });
+      .selectAll("input")
+      .data(categories)
+      .enter()
+      .append("input")
+      .attr("type", "button")
+      .attr("value", (d) => d)
+      .on("click", (d) => {
+         let sorter = d.target.value;
+         let index = categories.indexOf(sorter) + 1;
+         var api = $("#data").dataTable().api();
+         api.column(index).order('desc').draw();
+         reloadCharts();
+      });
 }
 
 function visibleInitialGraphs() {
@@ -82,39 +82,39 @@ function visibleInitialGraphs() {
 }
 
 function readyUpdate() {
-  const table = $("#data").DataTable({
-    dom: "Bfrtip",
-    select: {
-      style: "multi"
-    },
-    language: {
-      search: "クリニック名や住所で検索→"
-    },
-    buttons: [
-      {
-        text: "グラフ更新",
-        action: function () {
-          reloadCharts();
-        }
+   const table = $("#data").DataTable({
+      dom: "Bfrtip",
+      select: {
+         style: "multi"
       },
-      {
-        text: "選択解除",
-        action: function () {
-          table.rows({ selected: true }).deselect();
-          reloadCharts();
-        }
-      }
-    ]
-  });
+      language: {
+         search: "クリニック名や住所で検索→"
+      },
+      buttons: [
+         {
+            text: "グラフ更新",
+            action: function () {
+               reloadCharts();
+            }
+         },
+         {
+            text: "選択解除",
+            action: function () {
+               table.rows({ selected: true }).deselect();
+               reloadCharts();
+            }
+         }
+      ]
+   });
 }
 
 function reloadCharts() {
-  const hospitalNames = getHospitalNames().slice(0, plotSample);
+   const hospitalNames = getHospitalNames().slice(0, plotSample);
 
-  const etCount = getEtCount().slice(0, plotSample);
-  const pregCount = getPregCount().slice(0, plotSample);
-  const birthRate = getBirthRate().slice(0, plotSample);
-  updateCharts(hospitalNames, etCount, pregCount, birthRate);
+   const etCount = getEtCount().slice(0, plotSample);
+   const pregCount = getPregCount().slice(0, plotSample);
+   const birthRate = getBirthRate().slice(0, plotSample);
+   updateCharts(hospitalNames, etCount, pregCount, birthRate);
 }
 
 function getDataCategories() {
@@ -132,53 +132,53 @@ function getDataCategories() {
 }
 
 function getHospitalNames() {
-  // table.rows( { selected: true } );
+   // table.rows( { selected: true } );
 
-  var names = [];
-  var api = $("#data").dataTable().api();
+   var names = [];
+   var api = $("#data").dataTable().api();
 
-  let rows = api.rows({ selected: true }).data().toArray();
+   let rows = api.rows({ selected: true }).data().toArray();
 
-  rows.forEach(function (row) {
-    names.push(row[0]);
-  });
-  return names;
+   rows.forEach(function (row) {
+      names.push(row[0]);
+   });
+   return names;
 }
 
 function getEtCount() {
-  var stats = [];
-  var api = $("#data").dataTable().api();
+   var stats = [];
+   var api = $("#data").dataTable().api();
 
-  let rows = api.rows({ selected: true }).data().toArray();
+   let rows = api.rows({ selected: true }).data().toArray();
 
-  rows.forEach(function (row) {
-    stats.push(parseInt(row[1]));
-  });
-  return stats;
+   rows.forEach(function (row) {
+      stats.push(parseInt(row[1]));
+   });
+   return stats;
 }
 
 function getPregCount() {
-  var stats = [];
-  var api = $("#data").dataTable().api();
+   var stats = [];
+   var api = $("#data").dataTable().api();
 
-  let rows = api.rows({ selected: true }).data().toArray();
+   let rows = api.rows({ selected: true }).data().toArray();
 
-  rows.forEach(function (row) {
-    stats.push(parseInt(row[2]));
-  });
-  return stats;
+   rows.forEach(function (row) {
+      stats.push(parseInt(row[2]));
+   });
+   return stats;
 }
 
 function getBirthRate() {
-  var stats = [];
-  var api = $("#data").dataTable().api();
+   var stats = [];
+   var api = $("#data").dataTable().api();
 
-  let rows = api.rows({ selected: true }).data().toArray();
+   let rows = api.rows({ selected: true }).data().toArray();
 
-  rows.forEach(function (row) {
-    stats.push(parseFloat(row[4]));
-  });
-  return stats;
+   rows.forEach(function (row) {
+      stats.push(parseFloat(row[4]));
+   });
+   return stats;
 }
 
 function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
@@ -209,7 +209,7 @@ function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
          text: "",
          align: "left"
       },
-      xAxis: { // カテゴリーをここに
+      xAxis: {
          categories: hospitalNames,
          crosshair: true,
          // labels: {
@@ -230,28 +230,28 @@ function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
 }
 
 function tabulate(data) {
-  const table = d3.select("table");
-  const thead = table.append("thead");
-  const tbody = table.append("tbody");
+   const table = d3.select("table");
+   const thead = table.append("thead");
+   const tbody = table.append("tbody");
 
-  thead
-    .append("tr")
-    .selectAll(null)
-    .data(data.shift())
-    .enter()
-    .append("th")
-    .attr('nowrap', 'nowrap')
-    .text((d) => nameMap[d]);
+   thead
+      .append("tr")
+      .selectAll(null)
+      .data(data.shift())
+      .enter()
+      .append("th")
+      .attr('nowrap', 'nowrap')
+      .text((d) => nameMap[d]);
 
-  const rows = tbody.selectAll(null).data(data).enter().append("tr");
+   const rows = tbody.selectAll(null).data(data).enter().append("tr");
 
-  rows
-    .selectAll(null)
-    .data((d) => d)
-    .enter()
-    .append("td")
-    .text((d) => d);
+   rows
+      .selectAll(null)
+      .data((d) => d)
+      .enter()
+      .append("td")
+      .text((d) => d);
 
-  return table;
+   return table;
 }
 
