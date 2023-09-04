@@ -7,6 +7,8 @@ const NameMap = {
    'birth_ratio': '分娩率'
 };
 
+const DefaultSorter = 'et_count';
+
 let activeSorter = null;
 
 $(document).ready(function () {
@@ -88,9 +90,14 @@ function updateSorter() {
 
 function selectInitialGraphData() {
    let categories = getDataCategories();
-   let index = categories.indexOf('birth_ratio') + 1;
+   let index = categories.indexOf(NameMap[DefaultSorter]) + 1;
    var api = $("#data").dataTable().api();
-   api.column(index).order('desc').draw(); api.rows({page:'current'}).select().draw();
+   api.column(index).order('desc').draw();
+   api.rows({page:'current'}).select().draw();
+
+   d3.select('input.btn.btn-sm[value="'+NameMap[DefaultSorter]+'"]')
+      .classed('btn-outline-secondary', false)
+      .classed('btn-primary', true);
 }
 
 function readyUpdate() {
