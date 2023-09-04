@@ -1,0 +1,13 @@
+
+body {
+   margin: 1em;
+}
+
+.btn:focus {
+   outline: none !important;
+   box-shadow: none !important;
+}
+
+#sorter input {
+   margin: 0px 2px;
+}
