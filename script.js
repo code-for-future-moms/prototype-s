@@ -7,6 +7,8 @@ const NameMap = {
    'birth_ratio': '分娩率'
 };
 
+let activeSorter = null;
+
 $(document).ready(function () {
    d3.text(DataSource)
       .then(d3.tsvParseRows)
@@ -67,8 +69,15 @@ function updateSorter() {
       .enter()
       .append("input")
       .attr("type", "button")
+      .attr("class", "btn btn-outline-secondary btn-sm")
       .attr("value", (d) => d)
-      .on("click", (d) => {
+      .on("click", function (d) {
+         if (activeSorter) {
+            activeSorter.classed("btn-primary", false).classed("btn-outline-secondary", true);
+         }
+         activeSorter = d3.select(this);
+         activeSorter.classed("btn-outline-secondary", false).classed("btn-primary", true);
+
          let sorter = d.target.value;
          let index = categories.indexOf(sorter) + 1;
          var api = $("#data").dataTable().api();
