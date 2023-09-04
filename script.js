@@ -1,6 +1,6 @@
-const plotSample = 7;
-const dataSource = 'https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv'
-const nameMap = {
+const PlotSample = 7;
+const DataSource = 'https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv'
+const NameMap = {
    'et_count': '移植数',
    'preg_count': '妊娠数',
    'birth_count': '分娩数',
@@ -8,7 +8,7 @@ const nameMap = {
 };
 
 $(document).ready(function () {
-   d3.text(dataSource)
+   d3.text(DataSource)
       .then(d3.tsvParseRows)
       .then(tabulate)
       .then(readyUpdate)
@@ -23,7 +23,7 @@ let filters = [];
 function updateSwitcher() {
    let categories = getDataCategories();
    categories = categories.filter((data) => {
-      return data != nameMap['birth_count'];
+      return data != NameMap['birth_count'];
    });
 
    const switcher = d3.select("#switcher")
@@ -107,11 +107,11 @@ function readyUpdate() {
 }
 
 function reloadCharts() {
-   const hospitalNames = getHospitalNames().slice(0, plotSample);
+   const hospitalNames = getHospitalNames().slice(0, PlotSample);
 
-   const etCount = getEtCount().slice(0, plotSample);
-   const pregCount = getPregCount().slice(0, plotSample);
-   const birthRate = getBirthRate().slice(0, plotSample);
+   const etCount = getEtCount().slice(0, PlotSample);
+   const pregCount = getPregCount().slice(0, PlotSample);
+   const birthRate = getBirthRate().slice(0, PlotSample);
    updateCharts(hospitalNames, etCount, pregCount, birthRate);
 }
 
@@ -182,15 +182,15 @@ function getBirthRate() {
 function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
    let series = [
       {
-         name: nameMap["et_count"],
+         name: NameMap["et_count"],
          data: etCount
       },
       {
-         name: nameMap["preg_count"],
+         name: NameMap["preg_count"],
          data: pregCount
       },
       {
-         name: nameMap["birth_ratio"],
+         name: NameMap["birth_ratio"],
          data: birthRate
       }
    ];
@@ -239,7 +239,7 @@ function tabulate(data) {
       .enter()
       .append("th")
       .attr('nowrap', 'nowrap')
-      .text((d) => nameMap[d]);
+      .text((d) => NameMap[d]);
 
    const rows = tbody.selectAll(null).data(data).enter().append("tr");
 
