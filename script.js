@@ -30,12 +30,15 @@ function updateSwitcher() {
       .selectAll("div")
       .data(categories)
       .enter()
-      .append("label");
+      .append("div")
+      .attr("class", "form-check form-check-inline");
 
    filters=[...categories];
    switcher.append("input")
       .attr("type", "checkbox")
       .attr("checked", true)
+      .attr("class", "form-check-input")
+      .attr("id", (_, i) => 'check-box-' + i)
       .attr("value", (d) => d)
       .on("change", function(_, d) {
          if (this.checked) {
@@ -49,7 +52,9 @@ function updateSwitcher() {
          reloadCharts();
       });
 
-   switcher.append("span")
+   switcher.append("label")
+      .attr("class", "form-check-label")
+      .attr("for", (_, i) => 'check-box-' + i)
       .text((d) => d);
 
 }
