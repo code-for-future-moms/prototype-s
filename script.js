@@ -28,7 +28,7 @@ let filters = [];
 function updateSwitcher() {
 	let categories = getDataCategories();
 	categories = categories.filter((data) => {
-		return data != NameMap["birth_count"];
+		return data !== NameMap.birth_count;
 	});
 
 	const switcher = d3
@@ -45,7 +45,7 @@ function updateSwitcher() {
 		.attr("type", "checkbox")
 		.attr("checked", true)
 		.attr("class", "form-check-input")
-		.attr("id", (_, i) => "check-box-" + i)
+		.attr("id", (_, i) => `check-box-${i}`)
 		.attr("value", (d) => d)
 		.on("change", function (_, d) {
 			if (this.checked) {
@@ -62,12 +62,12 @@ function updateSwitcher() {
 	switcher
 		.append("label")
 		.attr("class", "form-check-label")
-		.attr("for", (_, i) => "check-box-" + i)
+		.attr("for", (_, i) => `check-box-${i}`)
 		.text((d) => d);
 }
 
 function updateSorter() {
-	let categories = getDataCategories();
+	const categories = getDataCategories();
 	d3.select("#sorter")
 		.selectAll("input")
 		.data(categories)
@@ -87,22 +87,22 @@ function updateSorter() {
 				.classed("btn-outline-secondary", false)
 				.classed("btn-primary", true);
 
-			let sorter = d.target.value;
-			let index = categories.indexOf(sorter) + 1;
-			var api = $("#data").dataTable().api();
+			const sorter = d.target.value;
+			const index = categories.indexOf(sorter) + 1;
+			const api = $("#data").dataTable().api();
 			api.column(index).order("desc").draw();
 			reloadCharts();
 		});
 }
 
 function selectInitialGraphData() {
-	let categories = getDataCategories();
-	let index = categories.indexOf(NameMap[DefaultSorter]) + 1;
-	var api = $("#data").dataTable().api();
+	const categories = getDataCategories();
+	const index = categories.indexOf(NameMap[DefaultSorter]) + 1;
+	const api = $("#data").dataTable().api();
 	api.column(index).order("desc").draw();
 	api.rows({ page: "current" }).select().draw();
 
-	d3.select('input.btn.btn-sm[value="' + NameMap[DefaultSorter] + '"]')
+	d3.select(`input.btn.btn-sm[value="${NameMap[DefaultSorter]}"]`)
 		.classed("btn-outline-secondary", false)
 		.classed("btn-primary", true);
 }
@@ -144,10 +144,10 @@ function reloadCharts() {
 }
 
 function getDataCategories() {
-	var categories = [];
-	var api = $("#data").dataTable().api();
+	const categories = [];
+	const api = $("#data").dataTable().api();
 
-	var headers = api.columns().header().toArray();
+	const headers = api.columns().header().toArray();
 	headers.forEach(function (heading, index) {
 		if (index > 0 && index < headers.length - 1) {
 			categories.push($(heading).html());
@@ -160,10 +160,10 @@ function getDataCategories() {
 function getHospitalNames() {
 	// table.rows( { selected: true } );
 
-	var names = [];
-	var api = $("#data").dataTable().api();
+	const names = [];
+	const api = $("#data").dataTable().api();
 
-	let rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows({ selected: true }).data().toArray();
 
 	rows.forEach(function (row) {
 		names.push(row[0]);
@@ -172,10 +172,10 @@ function getHospitalNames() {
 }
 
 function getEtCount() {
-	var stats = [];
-	var api = $("#data").dataTable().api();
+	const stats = [];
+	const api = $("#data").dataTable().api();
 
-	let rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows({ selected: true }).data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseInt(row[1]));
@@ -184,10 +184,10 @@ function getEtCount() {
 }
 
 function getPregCount() {
-	var stats = [];
-	var api = $("#data").dataTable().api();
+	const stats = [];
+	const api = $("#data").dataTable().api();
 
-	let rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows({ selected: true }).data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseInt(row[2]));
@@ -196,10 +196,10 @@ function getPregCount() {
 }
 
 function getBirthRate() {
-	var stats = [];
-	var api = $("#data").dataTable().api();
+	const stats = [];
+	const api = $("#data").dataTable().api();
 
-	let rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows({ selected: true }).data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseFloat(row[4]));
@@ -210,15 +210,15 @@ function getBirthRate() {
 function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
 	let series = [
 		{
-			name: NameMap["et_count"],
+			name: NameMap.et_count,
 			data: etCount,
 		},
 		{
-			name: NameMap["preg_count"],
+			name: NameMap.preg_count,
 			data: pregCount,
 		},
 		{
-			name: NameMap["birth_ratio"],
+			name: NameMap.birth_ratio,
 			data: birthRate,
 		},
 	];
