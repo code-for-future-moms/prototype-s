@@ -1,38 +1,71 @@
-const PlotSample = 7;
+const PlotSample = 100;
 const DataSource =
 	"https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv";
 const NameMap = {
 	et_count: "移植数",
 	preg_count: "妊娠数",
-	birth_count: "分娩数",
-	birth_ratio: "分娩率",
+	birth_count: "生産分娩数",
+	birth_ratio: "生産分娩率",
 };
 
 const DefaultSorter = "et_count";
 
-let activeSorter = null;
+let activeRatioChartSorter = null;
+let activeCountChartSorter = null;
 
 $(document).ready(function () {
 	d3.text(DataSource)
 		.then(d3.tsvParseRows)
 		.then(tabulate)
 		.then(readyUpdate)
-		.then(updateSwitcher)
-		.then(updateSorter)
+		.then(updateRatioChartSorter)
+		.then(updateCountChartSwitcher)
+		.then(updateCountChartSorter)
 		.then(selectInitialGraphData)
 		.then(reloadCharts);
 });
 
 let filters = [];
 
-function updateSwitcher() {
+function updateRatioChartSorter() {
+	const categories = getDataCategories().filter(
+		(data) => data === NameMap.birth_ratio,
+	);
+	d3.select("#ratio-chart-sorter")
+		.selectAll("input")
+		.data(categories)
+		.enter()
+		.append("input")
+		.attr("type", "button")
+		.attr("class", "btn btn-outline-secondary btn-sm")
+		.attr("value", (d) => d)
+		.on("click", function (d) {
+			if (activeRatioChartSorter) {
+				activeRatioChartSorter
+					.classed("btn-primary", false)
+					.classed("btn-outline-secondary", true);
+			}
+			activeRatioChartSorter = d3.select(this);
+			activeRatioChartSorter
+				.classed("btn-outline-secondary", false)
+				.classed("btn-primary", true);
+
+			const sorter = d.target.value;
+			const index = categories.indexOf(sorter) + 1;
+			const api = $("#data").dataTable().api();
+			api.column(index).order("desc").draw();
+			reloadCharts();
+		});
+}
+
+function updateCountChartSwitcher() {
 	let categories = getDataCategories();
 	categories = categories.filter((data) => {
-		return data !== NameMap.birth_count;
+		return data !== NameMap.birth_ratio;
 	});
 
 	const switcher = d3
-		.select("#switcher")
+		.select("#count-chart-switcher")
 		.selectAll("div")
 		.data(categories)
 		.enter()
@@ -66,9 +99,9 @@ function updateSwitcher() {
 		.text((d) => d);
 }
 
-function updateSorter() {
+function updateCountChartSorter() {
 	const categories = getDataCategories();
-	d3.select("#sorter")
+	d3.select("#count-chart-sorter")
 		.selectAll("input")
 		.data(categories)
 		.enter()
@@ -77,13 +110,13 @@ function updateSorter() {
 		.attr("class", "btn btn-outline-secondary btn-sm")
 		.attr("value", (d) => d)
 		.on("click", function (d) {
-			if (activeSorter) {
-				activeSorter
+			if (activeCountChartSorter) {
+				activeCountChartSorter
 					.classed("btn-primary", false)
 					.classed("btn-outline-secondary", true);
 			}
-			activeSorter = d3.select(this);
-			activeSorter
+			activeCountChartSorter = d3.select(this);
+			activeCountChartSorter
 				.classed("btn-outline-secondary", false)
 				.classed("btn-primary", true);
 
@@ -139,8 +172,9 @@ function reloadCharts() {
 
 	const etCount = getEtCount().slice(0, PlotSample);
 	const pregCount = getPregCount().slice(0, PlotSample);
+	const birthCount = getBirthCount().slice(0, PlotSample);
 	const birthRate = getBirthRate().slice(0, PlotSample);
-	updateCharts(hospitalNames, etCount, pregCount, birthRate);
+	updateCharts(hospitalNames, etCount, pregCount, birthCount, birthRate);
 }
 
 function getDataCategories() {
@@ -154,16 +188,15 @@ function getDataCategories() {
 		}
 	});
 
+	console.log(categories);
 	return categories;
 }
 
 function getHospitalNames() {
-	// table.rows( { selected: true } );
-
 	const names = [];
 	const api = $("#data").dataTable().api();
 
-	const rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows().data().toArray();
 
 	rows.forEach(function (row) {
 		names.push(row[0]);
@@ -175,7 +208,7 @@ function getEtCount() {
 	const stats = [];
 	const api = $("#data").dataTable().api();
 
-	const rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows().data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseInt(row[1]));
@@ -187,10 +220,22 @@ function getPregCount() {
 	const stats = [];
 	const api = $("#data").dataTable().api();
 
-	const rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows().data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseInt(row[2]));
+	});
+	return stats;
+}
+
+function getBirthCount() {
+	const stats = [];
+	const api = $("#data").dataTable().api();
+
+	const rows = api.rows().data().toArray();
+
+	rows.forEach(function (row) {
+		stats.push(parseFloat(row[3]));
 	});
 	return stats;
 }
@@ -199,7 +244,7 @@ function getBirthRate() {
 	const stats = [];
 	const api = $("#data").dataTable().api();
 
-	const rows = api.rows({ selected: true }).data().toArray();
+	const rows = api.rows().data().toArray();
 
 	rows.forEach(function (row) {
 		stats.push(parseFloat(row[4]));
@@ -207,27 +252,26 @@ function getBirthRate() {
 	return stats;
 }
 
-function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
-	let series = [
-		{
-			name: NameMap.et_count,
-			data: etCount,
-		},
-		{
-			name: NameMap.preg_count,
-			data: pregCount,
-		},
+function updateCharts(
+	hospitalNames,
+	etCount,
+	pregCount,
+	birthCount,
+	birthRate,
+) {
+	updateRatioChart(hospitalNames, birthRate);
+	updateCountChart(hospitalNames, etCount, pregCount, birthCount);
+}
+
+function updateRatioChart(hospitalNames, birthRate) {
+	const series = [
 		{
 			name: NameMap.birth_ratio,
 			data: birthRate,
 		},
 	];
 
-	series = series.filter((data) => {
-		return filters.includes(data.name);
-	});
-
-	const chart = Highcharts.chart("container", {
+	Highcharts.chart("ratio-chart-container", {
 		chart: {
 			type: "column",
 		},
@@ -238,16 +282,71 @@ function updateCharts(hospitalNames, etCount, pregCount, birthRate) {
 		xAxis: {
 			categories: hospitalNames,
 			crosshair: true,
-			// labels: {
-			//    overflow: 'allow',
-			//    rotation: -80,
-			//    style: {
-			//       textOverflow: 'none' // 省略マーク(...)を表示しない
-			//    }
-			// }
+			labels: {
+				align: "left",
+				distance: 0,
+				allowOverlap: true,
+				step: 1,
+				style: {
+					fontSize: "9px",
+					textOverflow: "none",
+					writingMode: "vertical-rl",
+				},
+			},
 		},
 		yAxis: {
-			// 通常のyAxis設定
+			title: {
+				text: "",
+			},
+		},
+		series: series,
+	});
+}
+
+function updateCountChart(hospitalNames, etCount, pregCount, birthCount) {
+	let series = [
+		{
+			name: NameMap.et_count,
+			data: etCount,
+		},
+		{
+			name: NameMap.preg_count,
+			data: pregCount,
+		},
+		{
+			name: NameMap.birth_count,
+			data: birthCount,
+		},
+	];
+
+	series = series.filter((data) => {
+		return filters.includes(data.name);
+	});
+
+	Highcharts.chart("count-chart-container", {
+		chart: {
+			type: "column",
+		},
+		title: {
+			text: "",
+			align: "left",
+		},
+		xAxis: {
+			categories: hospitalNames,
+			crosshair: true,
+			labels: {
+				align: "left",
+				distance: 0,
+				allowOverlap: true,
+				step: 1,
+				style: {
+					fontSize: "9px",
+					textOverflow: "none",
+					writingMode: "vertical-rl",
+				},
+			},
+		},
+		yAxis: {
 			title: {
 				text: "",
 			},
