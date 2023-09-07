@@ -299,6 +299,12 @@ function updateRatioChart(hospitalNames, birthRate) {
 				text: "",
 			},
 		},
+		colors: ["#F677AD"],
+		plotOptions: {
+			series: {
+				pointPadding: 0.01,
+			},
+		},
 		series: series,
 	});
 }
@@ -349,6 +355,12 @@ function updateCountChart(hospitalNames, etCount, pregCount, birthCount) {
 		yAxis: {
 			title: {
 				text: "",
+			},
+		},
+		colors: ["#2CAFFE", "#544FC5", "#6B8ABC"],
+		plotOptions: {
+			series: {
+				pointPadding: 0.01,
 			},
 		},
 		series: series,
