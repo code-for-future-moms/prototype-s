@@ -1,6 +1,6 @@
 const PlotSample = 100;
 const DataSource =
-	"https://raw.githubusercontent.com/sunmoonStern/funin-open-data/main/hospital-data-address.tsv";
+"https://raw.githubusercontent.com/code-for-future-moms/fetch-open-data/main/data/hospital-data-address-R40620.tsv";
 const NameMap = {
 	et_count: "移植数",
 	preg_count: "妊娠数",
@@ -149,6 +149,7 @@ function readyUpdate() {
 		language: {
 			search: "クリニック名や住所で検索→",
 		},
+		info: false,
 		buttons: [
 			{
 				text: "グラフ更新",
