@@ -21,7 +21,6 @@ $(document).ready(function () {
 		.then(updateRatioChartSorter)
 		.then(updateCountChartSwitcher)
 		.then(updateCountChartSorter)
-		.then(selectInitialGraphData)
 		.then(reloadCharts);
 });
 
@@ -128,43 +127,16 @@ function updateCountChartSorter() {
 		});
 }
 
-function selectInitialGraphData() {
-	const categories = getDataCategories();
-	const index = categories.indexOf(NameMap[DefaultSorter]) + 1;
-	const api = $("#data").dataTable().api();
-	api.column(index).order("desc").draw();
-	api.rows({ page: "current" }).select().draw();
-
-	d3.select(`input.btn.btn-sm[value="${NameMap[DefaultSorter]}"]`)
-		.classed("btn-outline-secondary", false)
-		.classed("btn-primary", true);
-}
-
 function readyUpdate() {
 	const table = $("#data").DataTable({
 		dom: "Bfrtip",
-		select: {
-			style: "multi",
-		},
 		language: {
-			search: "クリニック名や住所で検索→",
+			search: "検索",
+			info: "",
+			infoFiltered: "",
+			infoPostFix: '<br><a href="https://github.com/code-for-future-moms/prototype-s">GitHub</a><br>',
 		},
-		info: false,
-		buttons: [
-			{
-				text: "グラフ更新",
-				action: function () {
-					reloadCharts();
-				},
-			},
-			{
-				text: "選択解除",
-				action: function () {
-					table.rows({ selected: true }).deselect();
-					reloadCharts();
-				},
-			},
-		],
+		info: true,
 	});
 }
 
